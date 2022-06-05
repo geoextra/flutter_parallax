@@ -20,7 +20,7 @@ In the `pubspec.yaml` of your flutter project, add the following dependency:
 ```yaml
 dependencies:
   ...
-  flutter_parallax: "^0.1.2"
+  flutter_parallax: "^0.2.0"
 ```
 
 In your library add the following import:
