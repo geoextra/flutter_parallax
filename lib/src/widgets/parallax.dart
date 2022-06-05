@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter/rendering.dart';
 
 import '../rendering/parallax.dart';
 
@@ -30,9 +28,9 @@ class Parallax extends StatelessWidget {
   /// The [mainAxisExtent] and [flipDirection] arguments must not be null.
   /// The [mainAxisExtent] argument must be positive.
   const Parallax.inside({
-    Key key,
-    @required this.child,
-    @required this.mainAxisExtent,
+    Key? key,
+    required this.child,
+    required this.mainAxisExtent,
     this.direction,
     this.flipDirection = false,
   })  : assert(mainAxisExtent != null && mainAxisExtent >= 0.0),
@@ -43,13 +41,12 @@ class Parallax extends StatelessWidget {
   ///
   /// The [controller] and [flipDirection] arguments must not be null.
   Parallax.outside({
-    Key key,
-    @required this.child,
-    @required ScrollController controller,
+    Key? key,
+    required this.child,
+    required ScrollController controller,
     this.direction,
-    this.flipDirection = false,
-  })  : assert(controller != null),
-        mainAxisExtent = null,
+    bool this.flipDirection = false,
+  })  : mainAxisExtent = null,
         delegate = new ParallaxOutsideDelegate(
             controller: controller,
             direction: direction,
@@ -60,11 +57,10 @@ class Parallax extends StatelessWidget {
   ///
   /// The [delegate] argument must not be null.
   const Parallax.custom({
-    Key key,
-    @required this.child,
-    @required this.delegate,
-  })  : assert(delegate != null),
-        mainAxisExtent = null,
+    Key? key,
+    required this.child,
+    required ParallaxDelegate this.delegate,
+  })  : mainAxisExtent = null,
         direction = null,
         flipDirection = null,
         super(key: key);
@@ -73,33 +69,33 @@ class Parallax extends StatelessWidget {
   final Widget child;
 
   /// The delegate that controls the algorithm used to position the child within its parent.
-  final ParallaxDelegate delegate;
+  final ParallaxDelegate? delegate;
 
   /// The extent of the child in the same axis as the scrolling.
-  final double mainAxisExtent;
+  final double? mainAxisExtent;
 
   /// The direction of the parallax effect when scroll offset increases.
   ///
   /// When null, the direction is the same as the [controller].
-  final AxisDirection direction;
+  final AxisDirection? direction;
 
   /// Whether to flip the given [direction].
   ///
   /// Defaults to false.
-  final bool flipDirection;
+  final bool? flipDirection;
 
   @override
   Widget build(BuildContext context) {
-    ParallaxDelegate parallaxDelegate = delegate;
+    ParallaxDelegate? parallaxDelegate = delegate;
     if (parallaxDelegate == null) {
-      final ScrollPosition position = Scrollable.of(context).position;
+      final ScrollPosition position = Scrollable.of(context)!.position;
       final ScrollController controller = new ScrollController();
       controller.attach(position);
       parallaxDelegate = new ParallaxInsideDelegate(
         mainAxisExtent: mainAxisExtent,
         direction: direction,
         controller: controller,
-        flipDirection: flipDirection,
+        flipDirection: flipDirection!,
       );
     }
 
@@ -127,11 +123,10 @@ class ParallaxSingleChildLayout extends SingleChildRenderObjectWidget {
   ///
   /// The [delegate] argument must not be null.
   const ParallaxSingleChildLayout({
-    Key key,
-    @required this.delegate,
-    Widget child,
-  })  : assert(delegate != null),
-        super(key: key, child: child);
+    Key? key,
+    required this.delegate,
+    Widget? child,
+  }) : super(key: key, child: child);
 
   /// The delegate that controls the layout of the child.
   final ParallaxDelegate delegate;
