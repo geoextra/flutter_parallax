@@ -92,7 +92,7 @@ class Parallax extends StatelessWidget {
       final ScrollController controller = new ScrollController();
       controller.attach(position);
       parallaxDelegate = new ParallaxInsideDelegate(
-        mainAxisExtent: mainAxisExtent,
+        mainAxisExtent: mainAxisExtent!,
         direction: direction,
         controller: controller,
         flipDirection: flipDirection!,

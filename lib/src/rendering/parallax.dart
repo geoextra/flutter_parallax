@@ -186,7 +186,7 @@ class ParallaxInsideDelegate extends ParallaxWithAxisDirectionDelegate {
     required this.mainAxisExtent,
     AxisDirection? direction,
     bool flipDirection = false,
-  })  : assert(mainAxisExtent != null && mainAxisExtent >= 0.0),
+  })  : assert(mainAxisExtent >= 0.0),
         super(
           controller: controller,
           direction: direction,
@@ -194,7 +194,7 @@ class ParallaxInsideDelegate extends ParallaxWithAxisDirectionDelegate {
         );
 
   /// The extent of the layout in the same axis as the scrolling.
-  final double? mainAxisExtent;
+  final double mainAxisExtent;
 
   @override
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
@@ -219,31 +219,37 @@ class ParallaxInsideDelegate extends ParallaxWithAxisDirectionDelegate {
     final bool isHorizontalAxis = (position.axis == Axis.horizontal);
 
     return constraints.constrain(new Size(
-        isHorizontalAxis ? mainAxisExtent! : constraints.maxWidth,
-        isHorizontalAxis ? constraints.maxHeight : mainAxisExtent!));
+        isHorizontalAxis ? mainAxisExtent : constraints.maxWidth,
+        isHorizontalAxis ? constraints.maxHeight : mainAxisExtent));
   }
 
   @override
   double getChildScrollRatio(
       Offset? offsetUnit, double childExtent, RenderBox renderBox) {
-    final RenderAbstractViewport viewport =
-        RenderAbstractViewport.of(renderBox)!;
+    final RenderAbstractViewport? viewport =
+        RenderAbstractViewport.of(renderBox);
 
     final ScrollPosition position = controller.position;
     final bool isHorizontalAxis = (position.axis == Axis.horizontal);
 
     final Offset localPositionOffset = isHorizontalAxis
-        ? new Offset(mainAxisExtent!, 0.0)
-        : new Offset(0.0, mainAxisExtent!); //offsetUnit * mainAxisExtent;
-    final Offset positionInViewport =
-        renderBox.localToGlobal(localPositionOffset, ancestor: viewport);
+        ? new Offset(mainAxisExtent, 0.0)
+        : new Offset(0.0, mainAxisExtent); //offsetUnit * mainAxisExtent;
+
+    Offset? positionInViewport;
+    try {
+      positionInViewport =
+          renderBox.localToGlobal(localPositionOffset, ancestor: viewport);
+    } catch (e) {}
+    if (positionInViewport == null) {
+      return 0;
+    }
 
     // One dimension should be 0.0, so this should be ok.
     final double distanceFromLeading =
         math.max(positionInViewport.dx, positionInViewport.dy);
-
     double scrollRatio = distanceFromLeading /
-        (controller.position.viewportDimension + mainAxisExtent!);
+        (controller.position.viewportDimension + mainAxisExtent);
     return scrollRatio;
   }
 }
